@@ -30,7 +30,7 @@ namespace Tracing_demo
                         applicationName: configuration.GetValue<string>("NewRelic-Logging:ServiceName"),
                         licenseKey: configuration.GetValue<string>("NewRelic-Logging:LicenseKey"),
                         //insertKey: configuration.GetValue<string>("NewRelic-Logging:ApiKey"),
-                        restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information
+                        restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error
                      )
                     .CreateLogger();
 
