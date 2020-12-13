@@ -2,14 +2,11 @@
 1. install .net agent
 msiexec.exe /i F:\NewRelicDotNetAgent_x64.msi /qb NR_LICENSE_KEY=eu01xx39d30618dde7994affd3ecd08dFFFFNRAL INSTALLLEVEL=50
 
-2. install .net infrastructure agent
-https://docs.newrelic.com/docs/logs/enable-log-management-new-relic/enable-log-monitoring-new-relic/forward-your-logs-using-infrastructure-agent
+2. create license key
 
-3. create license key
+3. create insight insert key
 
-4. create insight insert key
-
-5. install lib
+4. install lib
   <PackageReference Include="NewRelic.Agent" Version="8.36.0" />
   <PackageReference Include="NewRelic.Agent.Api" Version="8.36.0" />
   <PackageReference Include="NewRelic.LogEnrichers.Serilog" Version="1.0.1" />
@@ -25,3 +22,20 @@ https://docs.newrelic.com/docs/logs/enable-log-management-new-relic/enable-log-m
   <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
   <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
   <PackageReference Include="Serilog.Sinks.NewRelic.Logs" Version="1.0.1" />
+
+5. add following lines in Program.cs that export logs directly to New Relic
+  Log.Logger = new LoggerConfiguration()
+      .Enrich.WithNewRelicLogsInContext()
+      //.ReadFrom.Configuration(configuration)
+      .WriteTo.NewRelicLogs(
+          // need to check the reason not to send log message to New Relic via API
+          endpointUrl: configuration.GetValue<string>("NewRelic-Logging:EndpointUrl"), //endpoint depend on region chosen when account created
+          applicationName: configuration.GetValue<string>("NewRelic-Logging:ServiceName"),
+          licenseKey: configuration.GetValue<string>("NewRelic-Logging:LicenseKey"),
+          //insertKey: configuration.GetValue<string>("NewRelic-Logging:ApiKey"),
+          restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information
+        )
+      .CreateLogger();
+
+6. install .net infrastructure agent if ship additional info from log file
+https://docs.newrelic.com/docs/logs/enable-log-management-new-relic/enable-log-monitoring-new-relic/forward-your-logs-using-infrastructure-agent
