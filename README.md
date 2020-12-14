@@ -1,10 +1,13 @@
 # dotnetcore-newrelic-tracing
-1. install .net agent
+
+1. create license key
+https://docs.newrelic.com/docs/telemetry-data-platform/ingest-manage-data/ingest-apis/use-event-api-report-custom-events
+
+2. install .net agent
 msiexec.exe /i F:\NewRelicDotNetAgent_x64.msi /qb NR_LICENSE_KEY=eu01xx39d30618dde7994affd3ecd08dFFFFNRAL INSTALLLEVEL=50
 
-2. create license key
-
 3. create insight insert key
+  https://docs.newrelic.com/docs/telemetry-data-platform/ingest-manage-data/ingest-apis/use-event-api-report-custom-events
 
 4. install lib
   <PackageReference Include="NewRelic.Agent" Version="8.36.0" />
