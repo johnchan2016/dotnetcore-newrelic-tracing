@@ -23,5 +23,9 @@
     <PackageReference Include="Serilog.Sinks.NewRelic.Logs" Version="1.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Backup\" />
+  </ItemGroup>
+
 
 </Project>

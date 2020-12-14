@@ -1,9 +1,10 @@
-# dotnetcore-newrelic-tracing
+## dotnetcore-newrelic-tracing
 
-1. create license key
+1. create license key (api key)
 https://docs.newrelic.com/docs/telemetry-data-platform/ingest-manage-data/ingest-apis/use-event-api-report-custom-events
 
 2. install .net agent
+open Command Prompt, type the following cmd:
 msiexec.exe /i F:\NewRelicDotNetAgent_x64.msi /qb NR_LICENSE_KEY=eu01xx39d30618dde7994affd3ecd08dFFFFNRAL INSTALLLEVEL=50
 
 3. create insight insert key
@@ -34,11 +35,21 @@ msiexec.exe /i F:\NewRelicDotNetAgent_x64.msi /qb NR_LICENSE_KEY=eu01xx39d30618d
           // need to check the reason not to send log message to New Relic via API
           endpointUrl: configuration.GetValue<string>("NewRelic-Logging:EndpointUrl"), //endpoint depend on region chosen when account created
           applicationName: configuration.GetValue<string>("NewRelic-Logging:ServiceName"),
-          licenseKey: configuration.GetValue<string>("NewRelic-Logging:LicenseKey"),
-          //insertKey: configuration.GetValue<string>("NewRelic-Logging:ApiKey"),
+          insertKey: configuration.GetValue<string>("NewRelic-Logging:ApiKey"),
           restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information
         )
       .CreateLogger();
 
+6. update newrelic.config
+  <distributedTracing enabled="true" excludeNewrelicHeader="false"/>
+
 6. install .net infrastructure agent if ship additional info from log file
 https://docs.newrelic.com/docs/logs/enable-log-management-new-relic/enable-log-monitoring-new-relic/forward-your-logs-using-infrastructure-agent
+
+
+## Generate logs for troubleshooting (.NET)
+https://docs.newrelic.com/docs/agents/net-agent/troubleshooting/generate-logs-troubleshooting-net
+
+Logs directory at %ALLUSERSPROFILE%\New Relic\.NET Agent\Logs
+Agent logs: These file names begin with newrelic_agent_.
+Profiler logs: These file names begin with NewRelic.Profiler.

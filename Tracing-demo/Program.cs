@@ -28,9 +28,9 @@ namespace Tracing_demo
                         // need to check the reason not to send log message to New Relic via API
                         endpointUrl: configuration.GetValue<string>("NewRelic-Logging:EndpointUrl"),
                         applicationName: configuration.GetValue<string>("NewRelic-Logging:ServiceName"),
-                        licenseKey: configuration.GetValue<string>("NewRelic-Logging:LicenseKey"),
-                        //insertKey: configuration.GetValue<string>("NewRelic-Logging:ApiKey"),
-                        restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information
+                        //licenseKey: configuration.GetValue<string>("NewRelic-Logging:LicenseKey"),
+                        insertKey: configuration.GetValue<string>("NewRelic-Logging:ApiKey"),
+                        restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error
                      )
                     .CreateLogger();
 
