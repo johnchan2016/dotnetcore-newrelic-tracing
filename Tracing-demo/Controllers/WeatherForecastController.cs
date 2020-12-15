@@ -103,5 +103,22 @@ namespace Tracing_demo.Controllers
 
             throw new Exception("HTTP Error_v2");
         }
+
+        [Route("create")]
+        [HttpPost]
+        public WeatherForecast Create(CreateWeatherForecastDto dto)
+        {
+            Log.Information($"WeatherForecast / Create / Starting up at {DateTime.Now}");
+
+            var result = new WeatherForecast
+            {
+                Summary = dto.Summary,
+                Date = DateTime.Now,
+                TemperatureC = dto.TemperatureC
+            };
+            Log.Information($"WeatherForecast / Create / End Up at {DateTime.Now}");
+
+            return result;
+        }
     }
 }
