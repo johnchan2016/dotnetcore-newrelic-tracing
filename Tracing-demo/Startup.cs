@@ -90,7 +90,7 @@ namespace Tracing_demo
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMiddleware<EnableResponseBufferMiddleware>();
+            //app.UseMiddleware<EnableResponseBufferMiddleware>();
 
             app.UseRouting();
 
