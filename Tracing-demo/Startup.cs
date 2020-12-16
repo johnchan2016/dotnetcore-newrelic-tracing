@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -64,18 +65,18 @@ namespace Tracing_demo
                                 activity.SetTag("requestProtocol", httpRequest.Protocol);
                             }
                             //cannot get response result, so skip this
-/*                            else if (eventName.Equals("OnStopActivity") && rawObject is HttpResponse httpResponse)
-                            {
-                                //&& httpResponse.StatusCode >= StatusCodes.Status400BadRequest
-                                if (httpResponse.HttpContext.Request.Method != HttpMethods.Get )
-                                {
-                                    string body = await HttpHelper.GetResponseBodyStringAsync(httpResponse);
-                                    var tags = new ActivityTagsCollection { new KeyValuePair<string, object?>("values", body) };
-                                    activity.AddEvent(new ActivityEvent("HttpResponseBody", DateTime.Now, tags));
-                                }
+                            /*                            else if (eventName.Equals("OnStopActivity") && rawObject is HttpResponse httpResponse)
+                                                        {
+                                                            //&& httpResponse.StatusCode >= StatusCodes.Status400BadRequest
+                                                            if (httpResponse.HttpContext.Request.Method != HttpMethods.Get )
+                                                            {
+                                                                string body = await HttpHelper.GetResponseBodyStringAsync(httpResponse);
+                                                                var tags = new ActivityTagsCollection { new KeyValuePair<string, object?>("values", body) };
+                                                                activity.AddEvent(new ActivityEvent("HttpResponseBody", DateTime.Now, tags));
+                                                            }
 
-                                activity.SetTag("responseLength", httpResponse.ContentLength);
-                            }*/
+                                                            activity.SetTag("responseLength", httpResponse.ContentLength);
+                                                        }*/
                         }
                     )
                     .AddHttpClientInstrumentation();
@@ -88,6 +89,8 @@ namespace Tracing_demo
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseMiddleware<EnableResponseBufferMiddleware>();
 
             app.UseRouting();
 
