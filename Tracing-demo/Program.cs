@@ -16,7 +16,6 @@ namespace Tracing_demo
         {
             //從 appsettings.json 讀取設定資料
             var configuration = new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile(path: "appsettings.json", optional: false, reloadOnChange: true)
                     .Build();
 
