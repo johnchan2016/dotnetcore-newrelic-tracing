@@ -23,11 +23,15 @@ namespace Tracing_demo.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        readonly IConfiguration _config;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(
+            ILogger<WeatherForecastController> logger,
+            IConfiguration config
+            )
         {
             _logger = logger;
-            Log.Information("Init here");
+            _config = config;
         }
 
         [Route("get")]
@@ -59,7 +63,9 @@ namespace Tracing_demo.Controllers
             HttpClient client = new HttpClient();
 
             // Update port # in the following line.
-            string baseUrl = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host;
+
+            var host = HttpContext.Request.Host.Value.IndexOf("localhost") > 0 ? _config.GetValue<string>("HttpUrl:LocalHost") : _config.GetValue<string>("HttpUrl:Tracing");
+            string baseUrl = HttpContext.Request.Scheme + "://" + host;
             client.BaseAddress = new Uri(baseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
@@ -119,6 +125,53 @@ namespace Tracing_demo.Controllers
             Log.Information($"WeatherForecast / Create / End Up at {DateTime.Now}");
 
             return result;
+        }
+
+        [Route("getdemo")]
+        [HttpGet]
+        public async Task<DemoDto> GetDemo()
+        {
+            DemoDto demo = null;
+            try
+            {
+                Log.Information($"GetDemo  / Starting up at {DateTime.Now}");
+
+                demo = await GetDemoAsync("/demo");
+
+                Log.Information($"GetDemo / End Up at {DateTime.Now}");
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+            return demo;
+        }
+
+        async Task<DemoDto> GetDemoAsync(string path)
+        {
+            Log.Information($"GetDemoAsync / Start up at {DateTime.Now}");
+
+            HttpClient client = new HttpClient();
+
+            // Update port # in the following line.
+            var host = _config.GetValue<string>("HttpUrl:Demo");
+            string baseUrl = HttpContext.Request.Scheme + "://" + host;
+            client.BaseAddress = new Uri(baseUrl);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+
+            DemoDto demo = null;
+            HttpResponseMessage response = await client.GetAsync(path);
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                demo = JsonConvert.DeserializeObject<DemoDto>(content);
+            }
+
+            Log.Information($"GetDemoAsync / End Up at {DateTime.Now}");
+            return demo;
         }
     }
 }

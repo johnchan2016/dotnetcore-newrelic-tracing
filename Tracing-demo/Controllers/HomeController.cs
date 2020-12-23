@@ -18,8 +18,6 @@ namespace Tracing_demo.Controllers
         [HttpGet]
         public HomeDto Get()
         {
-            var rng = new Random();
-
             return new HomeDto
             {
                 Header = "ABA",

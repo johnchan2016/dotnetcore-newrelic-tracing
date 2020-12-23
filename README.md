@@ -3,9 +3,13 @@
 1. create license key (api key)
 https://docs.newrelic.com/docs/telemetry-data-platform/ingest-manage-data/ingest-apis/use-event-api-report-custom-events
 
-2. install .net agent
+2a. install .net agent if not host IIS
 open Command Prompt, type the following cmd:
 msiexec.exe /i F:\NewRelicDotNetAgent_x64.msi /qb NR_LICENSE_KEY=eu01xx39d30618dde7994affd3ecd08dFFFFNRAL INSTALLLEVEL=50
+
+2b. install .NET agent if host IIS using NuGet
+https://docs.newrelic.com/docs/agents/net-agent/install-guides/install-net-agent-using-nuget
+
 
 3. create insight insert key
   https://docs.newrelic.com/docs/telemetry-data-platform/ingest-manage-data/ingest-apis/use-event-api-report-custom-events
@@ -54,7 +58,10 @@ Logs directory at %ALLUSERSPROFILE%\New Relic\.NET Agent\Logs
 Agent logs: These file names begin with newrelic_agent_.
 Profiler logs: These file names begin with NewRelic.Profiler.
 
-7. grant apppool right for folder security to write log
+7. add host name for resolving in DNS server 
+c:\windows\system32\drivers\etc\hosts
+
+8. grant apppool right for folder security to write log
 https://blog.johnwu.cc/article/iis-run-asp-net-core.html
 1. change .NET CLR Version to .net 4.0
 2. right click folder -> security -> type "IIS AppPool\" + apppol name
