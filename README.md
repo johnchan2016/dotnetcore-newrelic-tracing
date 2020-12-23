@@ -53,3 +53,8 @@ https://docs.newrelic.com/docs/agents/net-agent/troubleshooting/generate-logs-tr
 Logs directory at %ALLUSERSPROFILE%\New Relic\.NET Agent\Logs
 Agent logs: These file names begin with newrelic_agent_.
 Profiler logs: These file names begin with NewRelic.Profiler.
+
+7. grant apppool right for folder security to write log
+https://blog.johnwu.cc/article/iis-run-asp-net-core.html
+1. change .NET CLR Version to .net 4.0
+2. right click folder -> security -> type "IIS AppPool\" + apppol name
