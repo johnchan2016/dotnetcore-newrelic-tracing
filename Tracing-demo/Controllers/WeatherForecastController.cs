@@ -63,7 +63,7 @@ namespace Tracing_demo.Controllers
 
             // Update port # in the following line.
 
-            var baseUrl = HttpContext.Request.Host.Value.IndexOf("localhost") > 0 ? _config.GetValue<string>("HttpUrl:LocalHost") : _config.GetValue<string>("HttpUrl:Tracing");
+            var baseUrl = HttpContext.Request.Host.Value.IndexOf("localhost") > -1 ? _config.GetValue<string>("HttpUrl:LocalHost") : _config.GetValue<string>("HttpUrl:Tracing");
 
             client.BaseAddress = new Uri(baseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
@@ -86,10 +86,7 @@ namespace Tracing_demo.Controllers
         [HttpGet]
         public async Task<IEnumerable<WeatherForecast>> Error()
         {
-            Log.Information($"WeatherForecast_v2 / Error / Starting up at {DateTime.Now}");
-
             var result = await GetErrorAsync("/home/");
-            Log.Information($"WeatherForecast / Error / End Up at {DateTime.Now}");
 
             return Enumerable.Empty<WeatherForecast>();
         }
@@ -112,15 +109,12 @@ namespace Tracing_demo.Controllers
         [HttpPost]
         public WeatherForecast Create(CreateWeatherForecastDto dto)
         {
-            Log.Information($"WeatherForecast / Create / Starting up at {DateTime.Now}");
-
             var result = new WeatherForecast
             {
                 Summary = dto.Summary,
                 Date = DateTime.Now,
                 TemperatureC = dto.TemperatureC
             };
-            Log.Information($"WeatherForecast / Create / End Up at {DateTime.Now}");
 
             return result;
         }
@@ -129,15 +123,7 @@ namespace Tracing_demo.Controllers
         [HttpGet]
         public async Task<DemoDto> GetDemoAsync()
         {
-            DemoDto demo = null;
-            try
-            {
-                demo = await GetDemoAsync("/demo");
-            }
-            catch(Exception ex)
-            {
-
-            }
+            var demo = await GetDemoAsync("/demo");
 
             return demo;
         }
@@ -171,20 +157,16 @@ namespace Tracing_demo.Controllers
         {
             var home = await GetHomeAsync("/home/");
 
-            await WritePersonAsync("/createperson");
+            dto.Age += 10;
+
+            await WritePersonAsync("/demo/createperson", dto);
         }
 
-        async Task WritePersonAsync(string path)
+        async Task WritePersonAsync(string path, CreatePersonDto dto)
         {
-            var baseUrl = HttpContext.Request.Host.Value.IndexOf("localhost") > 0 ? _config.GetValue<string>("HttpUrl:LocalHost") : _config.GetValue<string>("HttpUrl:Demo");
+            var baseUrl = HttpContext.Request.Host.Value.IndexOf("localhost") > -1 ? _config.GetValue<string>("HttpUrl:LocalHost") : _config.GetValue<string>("HttpUrl:Demo");
 
             HttpClient client = new HttpClient() { BaseAddress = new Uri(baseUrl) };
-
-            var dto = new CreatePersonDto
-            {
-                Name = "John chan",
-                Age = 10
-            };
 
             HttpContent contentPost = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
             await client.PostAsync(path, contentPost);
