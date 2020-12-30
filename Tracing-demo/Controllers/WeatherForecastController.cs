@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Tracing_demo.Controllers
@@ -58,14 +59,12 @@ namespace Tracing_demo.Controllers
 
         async Task<HomeDto> GetHomeAsync(string path)
         {
-            Log.Information($"GetHomeAsync / Start up at {DateTime.Now}");
-
             HttpClient client = new HttpClient();
 
             // Update port # in the following line.
 
-            var host = HttpContext.Request.Host.Value.IndexOf("localhost") > 0 ? _config.GetValue<string>("HttpUrl:LocalHost") : _config.GetValue<string>("HttpUrl:Tracing");
-            string baseUrl = HttpContext.Request.Scheme + "://" + host;
+            var baseUrl = HttpContext.Request.Host.Value.IndexOf("localhost") > 0 ? _config.GetValue<string>("HttpUrl:LocalHost") : _config.GetValue<string>("HttpUrl:Tracing");
+
             client.BaseAddress = new Uri(baseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
@@ -79,7 +78,6 @@ namespace Tracing_demo.Controllers
                 home = JsonConvert.DeserializeObject<HomeDto>(content);
             }
 
-            Log.Information($"GetHomeAsync / End Up at {DateTime.Now}");
             return home;
         }
 
@@ -129,16 +127,12 @@ namespace Tracing_demo.Controllers
 
         [Route("getdemo")]
         [HttpGet]
-        public async Task<DemoDto> GetDemo()
+        public async Task<DemoDto> GetDemoAsync()
         {
             DemoDto demo = null;
             try
             {
-                Log.Information($"GetDemo  / Starting up at {DateTime.Now}");
-
                 demo = await GetDemoAsync("/demo");
-
-                Log.Information($"GetDemo / End Up at {DateTime.Now}");
             }
             catch(Exception ex)
             {
@@ -150,13 +144,10 @@ namespace Tracing_demo.Controllers
 
         async Task<DemoDto> GetDemoAsync(string path)
         {
-            Log.Information($"GetDemoAsync / Start up at {DateTime.Now}");
-
             HttpClient client = new HttpClient();
 
             // Update port # in the following line.
-            var host = _config.GetValue<string>("HttpUrl:Demo");
-            string baseUrl = HttpContext.Request.Scheme + "://" + host;
+            var baseUrl = _config.GetValue<string>("HttpUrl:Demo");
             client.BaseAddress = new Uri(baseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
@@ -170,8 +161,33 @@ namespace Tracing_demo.Controllers
                 demo = JsonConvert.DeserializeObject<DemoDto>(content);
             }
 
-            Log.Information($"GetDemoAsync / End Up at {DateTime.Now}");
             return demo;
+        }
+
+
+        [Route("createnew")]
+        [HttpPost]
+        public async Task CreateNewPerson(CreatePersonDto dto)
+        {
+            var home = await GetHomeAsync("/home/");
+
+            await WritePersonAsync("/createperson");
+        }
+
+        async Task WritePersonAsync(string path)
+        {
+            var baseUrl = HttpContext.Request.Host.Value.IndexOf("localhost") > 0 ? _config.GetValue<string>("HttpUrl:LocalHost") : _config.GetValue<string>("HttpUrl:Demo");
+
+            HttpClient client = new HttpClient() { BaseAddress = new Uri(baseUrl) };
+
+            var dto = new CreatePersonDto
+            {
+                Name = "John chan",
+                Age = 10
+            };
+
+            HttpContent contentPost = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
+            await client.PostAsync(path, contentPost);
         }
     }
 }

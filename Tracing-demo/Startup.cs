@@ -47,40 +47,7 @@ namespace Tracing_demo
                         options.Endpoint = new Uri(this.Configuration.GetValue<string>("NewRelic:Endpoint"));
                         options.ApiKey = this.Configuration.GetValue<string>("NewRelic:ApiKey");
                     })
-                    .AddAspNetCoreInstrumentation((options) => options.Enrich
-                        = async (activity, eventName, rawObject) =>
-                        {
-                            if (eventName.Equals("OnStartActivity") && rawObject is HttpRequest httpRequest)
-                            {
-                                if (httpRequest.Method != HttpMethods.Get)
-                                {
-                                    string body = await HttpHelper.GetRequestBodyStringAsync(httpRequest);
-                                    if (!string.IsNullOrEmpty(body))
-                                    {
-                                        var dto = JsonConvert.DeserializeObject(body);
-                                        var tags = new ActivityTagsCollection { new KeyValuePair<string, object?>("values", dto) };
-
-                                        activity.AddEvent(new ActivityEvent("HttpRequestBody"));
-                                    }
-                                }
-
-                                activity.SetTag("requestProtocol", httpRequest.Protocol);
-                            }
-                            //cannot get response result, so skip this
-                            /*                            else if (eventName.Equals("OnStopActivity") && rawObject is HttpResponse httpResponse)
-                                                        {
-                                                            //&& httpResponse.StatusCode >= StatusCodes.Status400BadRequest
-                                                            if (httpResponse.HttpContext.Request.Method != HttpMethods.Get )
-                                                            {
-                                                                string body = await HttpHelper.GetResponseBodyStringAsync(httpResponse);
-                                                                var tags = new ActivityTagsCollection { new KeyValuePair<string, object?>("values", body) };
-                                                                activity.AddEvent(new ActivityEvent("HttpResponseBody", DateTime.Now, tags));
-                                                            }
-
-                                                            activity.SetTag("responseLength", httpResponse.ContentLength);
-                                                        }*/
-                        }
-                    )
+                    .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation();
             });
         }
@@ -92,7 +59,7 @@ namespace Tracing_demo
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.UseMiddleware<EnableResponseBufferMiddleware>();
+            app.UseMiddleware<EnableResponseBufferMiddleware>();
 
             app.UseRouting();
 

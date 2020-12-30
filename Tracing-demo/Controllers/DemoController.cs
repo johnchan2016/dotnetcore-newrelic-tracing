@@ -25,12 +25,19 @@ namespace Tracing_demo.Controllers
 
         public DemoDto Index()
         {
-            //throw new Exception("Demo error");
             return new DemoDto
             {
                 CurrentTime = DateTime.Now,
                 Message = "This is HomeController.Demo()"
             };
+        }
+
+
+        [Route("createperson")]
+        [HttpPost]
+        public void CreatePerson(CreatePersonDto dto)
+        {
+            throw new Exception("Person exist");
         }
     }
 }

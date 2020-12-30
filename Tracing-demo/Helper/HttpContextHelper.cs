@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Tracing_demo.Helper
 {
-    public class HttpHelper
+    public class HttpContextHelper
     {
         public static async Task<string> GetRequestBodyStringAsync(HttpRequest httpRequest)
         {
@@ -24,24 +24,18 @@ namespace Tracing_demo.Helper
             }
         }
 
-        public static async Task<string> GetResponseBodyStringAsync(HttpResponse httpResponse)
+        public static async Task<string> GetResponseBodyStringAsync(MemoryStream responseBody, Stream originalBodyStream)
         {
             string responseContent;
 
-            var originalBodyStream = httpResponse.Body;
-            using (var fakeResponseBody = new MemoryStream())
+            responseBody.Seek(0, SeekOrigin.Begin);
+            using (var reader = new StreamReader(responseBody))
             {
-                httpResponse.Body = fakeResponseBody;
+                responseContent = await reader.ReadToEndAsync();
+                responseBody.Seek(0, SeekOrigin.Begin);
 
-                fakeResponseBody.Seek(0, SeekOrigin.Begin);
-                using (var reader = new StreamReader(fakeResponseBody, Encoding.UTF8, false, 1024, true))
-                {
-                    responseContent = await reader.ReadToEndAsync();
-                    fakeResponseBody.Seek(0, SeekOrigin.Begin);
-
-                    await fakeResponseBody.CopyToAsync(originalBodyStream);
-                }
-            }
+                await responseBody.CopyToAsync(originalBodyStream);
+            }            
 
             return responseContent;
         }

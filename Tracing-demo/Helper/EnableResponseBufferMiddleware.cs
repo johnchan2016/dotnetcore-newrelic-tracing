@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using NewRelic.Api.Agent;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,28 +18,39 @@ namespace Tracing_demo.Helper
         }
 
         public async Task Invoke(HttpContext context)
-        {
-            if (context.Response.StatusCode >= StatusCodes.Status400BadRequest)
+        {        
+            context.Request.EnableBuffering();
+
+            IAgent agent = NewRelic.Api.Agent.NewRelic.GetAgent();
+            ITransaction transaction = agent.CurrentTransaction;
+
+            try
             {
+                if (context.Request.Method != HttpMethods.Get)
+                {
+                    var requestValue = await HttpContextHelper.GetRequestBodyStringAsync(context.Request);
+                    transaction.CurrentSpan.AddCustomAttribute("custom.request", requestValue);
+                }
+
                 string responseContent;
 
                 var originalBodyStream = context.Response.Body;
-                using (var fakeResponseBody = new MemoryStream())
+                using (var responseBody = new MemoryStream())
                 {
-                    context.Response.Body = fakeResponseBody;
+                    context.Response.Body = responseBody;
 
                     await _next(context);
 
-                    fakeResponseBody.Seek(0, SeekOrigin.Begin);
-                    using (var reader = new StreamReader(fakeResponseBody))
-                    {
-                        responseContent = await reader.ReadToEndAsync();
-                        fakeResponseBody.Seek(0, SeekOrigin.Begin);
+                    responseContent = await HttpContextHelper.GetResponseBodyStringAsync(responseBody, originalBodyStream);
 
-                        await fakeResponseBody.CopyToAsync(originalBodyStream);
-                    }
+                    transaction.CurrentSpan.AddCustomAttribute("custom.response", responseContent);
                 }
-                Console.WriteLine($"Response.Body={responseContent}");
+            }
+            catch(Exception ex)
+            {
+                transaction.CurrentSpan
+                    .AddCustomAttribute("custom.message", ex.GetErrorMessage())
+                    .AddCustomAttribute("custom.stacktrace", ex.StackTrace);
             }
         }
     }

@@ -5,13 +5,26 @@ https://docs.newrelic.com/docs/telemetry-data-platform/ingest-manage-data/ingest
 
 2a. install .net agent if not host IIS
 open Command Prompt, type the following cmd:
-msiexec.exe /i F:\NewRelicDotNetAgent_x64.msi /qb NR_LICENSE_KEY=eu01xx39d30618dde7994affd3ecd08dFFFFNRAL INSTALLLEVEL=50
+msiexec.exe /i F:\NewRelicDotNetAgent_x64.msi /qb NR_LICENSE_KEY=your-license-key INSTALLLEVEL=50
 
-2b. install .NET agent if host IIS using NuGet
+2b. install .NET agent if host IIS using NuGet for app-local
 https://docs.newrelic.com/docs/agents/net-agent/install-guides/install-net-agent-using-nuget
 
 
-3. create insight insert key
+3. update web.config to set app's environment variable
+https://docs.newrelic.com/docs/agents/net-agent/configuration/net-agent-configuration
+
+  <aspNetCore processPath="dotnet" arguments=".\Tracing-demo.dll" stdoutLogEnabled="false" stdoutLogFile=".\logs\stdout" hostingModel="inprocess">
+    <environmentVariables>
+      <environmentVariable name="CORECLR_ENABLE_PROFILING" value="1" />
+      <environmentVariable name="CORECLR_PROFILER" value="{36032161-FFC0-4B61-B559-F6C5D41BAE5A}" />
+      <environmentVariable name="NEWRELIC_INSTALL_PATH" value="C:\inetpub\wwwroot\tracing\newrelic" />
+      <environmentVariable name="CORECLR_NEWRELIC_HOME" value="C:\inetpub\wwwroot\tracing\newrelic" />
+    </environmentVariables>
+  </aspNetCore>
+
+
+3. create insight insert key (optional)
   https://docs.newrelic.com/docs/telemetry-data-platform/ingest-manage-data/ingest-apis/use-event-api-report-custom-events
 
 4. install lib
