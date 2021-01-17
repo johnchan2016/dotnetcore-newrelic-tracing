@@ -153,23 +153,25 @@ namespace Tracing_demo.Controllers
 
         [Route("createnew")]
         [HttpPost]
-        public async Task CreateNewPerson(CreatePersonDto dto)
+        public async Task<IActionResult> CreateNewPerson(CreatePersonDto dto)
         {
             var home = await GetHomeAsync("/home/");
 
             dto.Age += 10;
 
-            await WritePersonAsync("/demo/createperson", dto);
+            var abc = await WritePersonAsync("/demo/createperson", dto);
+
+            return Ok(abc);
         }
 
-        async Task WritePersonAsync(string path, CreatePersonDto dto)
+        async Task<HttpResponseMessage> WritePersonAsync(string path, CreatePersonDto dto)
         {
             var baseUrl = HttpContext.Request.Host.Value.IndexOf("localhost") > -1 ? _config.GetValue<string>("HttpUrl:LocalHost") : _config.GetValue<string>("HttpUrl:Demo");
 
             HttpClient client = new HttpClient() { BaseAddress = new Uri(baseUrl) };
 
             HttpContent contentPost = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
-            await client.PostAsync(path, contentPost);
+            return await client.PostAsync(path, contentPost);
         }
     }
 }
