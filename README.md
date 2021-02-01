@@ -43,6 +43,7 @@ https://docs.newrelic.com/docs/agents/net-agent/configuration/net-agent-configur
   <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
   <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
   <PackageReference Include="Serilog.Sinks.NewRelic.Logs" Version="1.0.1" />
+  <PackageReference Include="Microsoft.AspNet.Http" Version="2.2.0" />
 
 5. add following lines in Program.cs that export logs directly to New Relic
   Log.Logger = new LoggerConfiguration()
