@@ -1,19 +1,25 @@
-﻿{
-  "$schema": "http://json.schemastore.org/launchsettings.json",
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:55403",
+      "applicationUrl": "http://localhost:5000",
       "sslPort": 0
     }
   },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
       "launchUrl": "weatherforecast",
       "environmentVariables": {
+        "CORECLR_NEWRELIC_HOME": "F:\\Program Files\\VS-Projects\\newrelic",
+        "NEW_RELIC_LICENSE_KEY": "eu01xx39d30618dde7994affd3ecd08dFFFFNRAL",
+        "CORECLR_ENABLE_PROFILING": "1",
+        "CORECLR_PROFILER": "{36032161-FFC0-4B61-B559-F6C5D41BAE5A}",
+        "CORECLR_PROFILER_PATH": "F:\\Program Files\\VS-Projects\\newrelic\\NewRelic.Profiler.dll",
+        "NEW_RELIC_APP_NAME": "Tracing-test",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
@@ -21,10 +27,16 @@
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "weatherforecast",
-      "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
+        "CORECLR_NEWRELIC_HOME": "F:\\Program Files\\VS-Projects\\newrelic",
+        "NEW_RELIC_LICENSE_KEY": "eu01xx39d30618dde7994affd3ecd08dFFFFNRAL",
+        "CORECLR_ENABLE_PROFILING": "1",
+        "CORECLR_PROFILER": "{36032161-FFC0-4B61-B559-F6C5D41BAE5A}",
+        "CORECLR_PROFILER_PATH": "F:\\Program Files\\VS-Projects\\newrelic\\NewRelic.Profiler.dll",
+        "NEW_RELIC_APP_NAME": "Tracing-test",
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "http://localhost:5000"
     }
   }
 }
